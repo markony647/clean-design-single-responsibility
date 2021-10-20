@@ -125,8 +125,8 @@ public class EmployeeManagerTest {
         final ArgumentCaptor<Message> propertiesCaptor = ArgumentCaptor.forClass(Message.class);
         mockStatic(Transport.class);
 
-        EmployeeReportSender manager = new EmployeeReportSender();
-        manager.sendEmployeesReport(mockConnection);
+        EmployeeReportSender manager = new EmployeeReportSender(mockConnection);
+        manager.sendEmployeesReport();
 
         verifyStatic(Transport.class);
         Transport.send(propertiesCaptor.capture());
@@ -136,7 +136,7 @@ public class EmployeeManagerTest {
         //check caching
         clearInvocations(resultSetMock);
         when(resultSetMock.next()).thenReturn(false);
-        manager.sendEmployeesReport(mockConnection);
+        manager.sendEmployeesReport();
         assertEquals(propertiesCaptor.getValue().getContent(), expected);
     }
 

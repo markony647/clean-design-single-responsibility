@@ -13,11 +13,7 @@ import java.util.List;
 
 public class EmployeeRepository {
     private final EmployeeCachingService employeeCachingService;
-    private Connection connection;
-
-    public EmployeeRepository() {
-        employeeCachingService = new EmployeeCachingService();
-    }
+    private final Connection connection;
 
     public EmployeeRepository(Connection connection) {
         employeeCachingService = new EmployeeCachingService();
@@ -26,12 +22,12 @@ public class EmployeeRepository {
 
     public List<Employee> findAll() {
         if (employeeCachingService.isCacheEmpty()) {
-            return retrieveFromStorage(connection);
+            return retrieveFromStorage();
         }
         return employeeCachingService.getCache();
     }
 
-    private List<Employee> retrieveFromStorage(Connection connection) {
+    private List<Employee> retrieveFromStorage() {
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery("SELECT * FROM Employees")) {
 
@@ -55,6 +51,4 @@ public class EmployeeRepository {
         }
         return employeeCachingService.getCache();
     }
-
-
 }

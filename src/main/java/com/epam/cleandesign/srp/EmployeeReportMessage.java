@@ -1,6 +1,5 @@
 package com.epam.cleandesign.srp;
 
-import com.epam.cleandesign.srp.repository.EmployeeRepository;
 import com.epam.cleandesign.srp.service.EmployeeRepresentationService;
 
 import java.sql.Connection;
@@ -8,9 +7,14 @@ import java.sql.Connection;
 public class EmployeeReportMessage {
 
     private final String recipient = "abcd@gmail.com";
-    private final String messageOwner = "web@gmail.com";
+    private final String author = "web@gmail.com";
     private final String subject = "Employees report";
-    //private final String content;
+    private final String contentType = "text/html; charset=utf-8";
+    private final String content;
+
+    public EmployeeReportMessage(Connection connection) {
+        this.content = new EmployeeRepresentationService(connection).getAllAsHtml();
+    }
 
     public String getSubject() {
         return subject;
@@ -20,7 +24,15 @@ public class EmployeeReportMessage {
         return recipient;
     }
 
-    public String getMessageOwner() {
-        return messageOwner;
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getContentType() {
+        return contentType;
     }
 }

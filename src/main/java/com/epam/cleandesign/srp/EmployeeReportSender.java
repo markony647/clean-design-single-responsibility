@@ -1,7 +1,5 @@
 package com.epam.cleandesign.srp;
 
-import com.epam.cleandesign.srp.service.EmployeeRepresentationService;
-
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -9,47 +7,37 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.sql.Connection;
-import java.util.Properties;
 
 public final class EmployeeReportSender {
 
-    private EmployeeRepresentationService presentationService;
+    private final SessionManager sessionManager;
+    private final EmployeeReportMessage message;
 
-    public void sendEmployeesReport(Connection connection) {
-        presentationService = initPresentationService(connection);
-        EmployeeReportMessage message = new EmployeeReportMessage();
+    public EmployeeReportSender(Connection connection) {
+        sessionManager = new SessionManager();
+        message = new EmployeeReportMessage(connection);
+    }
 
-        Properties properties = prepareProperties();
-        Session session = prepareSession(properties);
-
-        MimeMessage mimeMessage = new MimeMessage(session);
+    public void sendEmployeesReport() {
         try {
-            mimeMessage.setFrom(new InternetAddress(message.getMessageOwner()));
-            mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(message.getRecipient()));
-            mimeMessage.setSubject(message.getSubject());
-
-            String employeesHtml = presentationService.getAllAsHtml();
-
-            mimeMessage.setContent(employeesHtml, "text/html; charset=utf-8");
-
-            Transport.send(mimeMessage);
-        } catch (MessagingException e) {
-            throw new IllegalStateException(e);
+            MimeMessage mimeMessage = prepareMimeMessage();
+            sendMessage(mimeMessage);
+        } catch (MessagingException ex) {
+            throw new IllegalStateException(ex);
         }
     }
 
-    private EmployeeRepresentationService initPresentationService(Connection connection) {
-        return new EmployeeRepresentationService(connection);
+    private void sendMessage(MimeMessage message) throws MessagingException {
+        Transport.send(message);
     }
 
-    private Session prepareSession(Properties properties) {
-        return Session.getDefaultInstance(properties);
-    }
-
-    private Properties prepareProperties() {
-        String host = "localhost";
-        Properties properties = System.getProperties();
-        properties.setProperty("mail.smtp.host", host);
-        return properties;
+    private MimeMessage prepareMimeMessage() throws MessagingException {
+        Session session = sessionManager.prepareSession();
+        MimeMessage mimeMessage = new MimeMessage(session);
+        mimeMessage.setFrom(new InternetAddress(message.getAuthor()));
+        mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(message.getRecipient()));
+        mimeMessage.setSubject(message.getSubject());
+        mimeMessage.setContent(message.getContent(), message.getContentType());
+        return mimeMessage;
     }
 }
