@@ -142,14 +142,14 @@ public class EmployeeManagerTest {
 
     private void testJsonConvert(String json) throws Exception {
         EmployeeRepresentationService employeeRepresentationService = new EmployeeRepresentationService(mockConnection);
-        String serialized = employeeRepresentationService.getAllAsJson(mockConnection);
+        String serialized = employeeRepresentationService.getAllAsJson();
 
         JSONAssert.assertEquals(serialized, serialized, json, false);
 
         //check caching
         clearInvocations(resultSetMock);
         when(resultSetMock.next()).thenReturn(false);
-        serialized = employeeRepresentationService.getAllAsJson(mockConnection);
+        serialized = employeeRepresentationService.getAllAsJson();
         JSONAssert.assertEquals(serialized, serialized, json, false);
     }
 }

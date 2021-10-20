@@ -24,7 +24,7 @@ public class EmployeeRepository {
         this.connection = connection;
     }
 
-    public List<Employee> findAll(Connection connection) {
+    public List<Employee> findAll() {
         if (employeeCachingService.isCacheEmpty()) {
             return retrieveFromStorage(connection);
         }

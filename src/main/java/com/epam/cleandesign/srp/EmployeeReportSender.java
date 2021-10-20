@@ -13,14 +13,10 @@ import java.util.Properties;
 
 public final class EmployeeReportSender {
 
-//    private final EmployeeRepresentationService employeeRepresentationService;
-//
-//    public EmployeeReportSender() {
-//        this.employeeRepresentationService = new EmployeeRepresentationService();
-//    }
+    private EmployeeRepresentationService presentationService;
 
     public void sendEmployeesReport(Connection connection) {
-        EmployeeRepresentationService employeeRepresentationService = new EmployeeRepresentationService(connection);
+        presentationService = initPresentationService(connection);
         EmployeeReportMessage message = new EmployeeReportMessage();
 
         Properties properties = prepareProperties();
@@ -32,7 +28,7 @@ public final class EmployeeReportSender {
             mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(message.getRecipient()));
             mimeMessage.setSubject(message.getSubject());
 
-            String employeesHtml = employeeRepresentationService.getAllAsHtml(connection);
+            String employeesHtml = presentationService.getAllAsHtml();
 
             mimeMessage.setContent(employeesHtml, "text/html; charset=utf-8");
 
@@ -40,6 +36,10 @@ public final class EmployeeReportSender {
         } catch (MessagingException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private EmployeeRepresentationService initPresentationService(Connection connection) {
+        return new EmployeeRepresentationService(connection);
     }
 
     private Session prepareSession(Properties properties) {

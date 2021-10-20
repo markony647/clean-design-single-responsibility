@@ -15,8 +15,8 @@ public class EmployeeRepresentationService {
         employeeRepository = new EmployeeRepository(connection);
     }
 
-    public synchronized String getAllAsHtml(Connection connection) {
-        List<Employee> employees = employeeRepository.findAll(connection);
+    public synchronized String getAllAsHtml() {
+        List<Employee> employees = employeeRepository.findAll();
 
         StringBuilder builder = new StringBuilder();
         builder.append("<table>").append("<tr><th>Employee</th><th>Position</th></tr>");
@@ -30,8 +30,8 @@ public class EmployeeRepresentationService {
         return builder.toString();
     }
 
-    public synchronized String getAllAsJson(Connection connection) {
-        List<Employee> employees = employeeRepository.findAll(connection);
+    public synchronized String getAllAsJson() {
+        List<Employee> employees = employeeRepository.findAll();
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.writeValueAsString(employees);
