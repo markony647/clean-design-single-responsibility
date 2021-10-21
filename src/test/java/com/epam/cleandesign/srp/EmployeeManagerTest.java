@@ -130,7 +130,7 @@ public class EmployeeManagerTest {
         EmployeeRepresentationService employeeRepresentationService = new EmployeeRepresentationService();
         EmployeeRepository employeeRepository = new EmployeeRepository(mockConnection);
         List<Employee> allEmployees = employeeRepository.findAll();
-        String htmlContent = employeeRepresentationService.getAllAsHtml(allEmployees);
+        String htmlContent = employeeRepresentationService.getAllAsHtmlTable(allEmployees);
         EmployeeReportMessage message = new EmployeeReportMessage(htmlContent);
         employeeReportSender.send(message);
 

@@ -1,6 +1,7 @@
 package com.epam.cleandesign.srp.service;
 
 import com.epam.cleandesign.srp.Employee;
+import com.epam.cleandesign.srp.HtmlTableBuilder;
 import com.epam.cleandesign.srp.converter.EmployeeConverter;
 import com.epam.cleandesign.srp.converter.HtmlEmployeeConverter;
 import com.epam.cleandesign.srp.converter.JsonEmployeeConverter;
@@ -10,18 +11,18 @@ import java.util.List;
 public class EmployeeRepresentationService {
     private EmployeeConverter employeeConverter;
 
-    public synchronized String getAllAsHtml(List<Employee> employees) {
+    public synchronized String getAllAsHtmlTable(List<Employee> employees) {
         employeeConverter = new HtmlEmployeeConverter();
 
-        StringBuilder builder = new StringBuilder();
-        builder.append("<table>").append("<tr><th>Employee</th><th>Position</th></tr>");
+        HtmlTableBuilder tableBuilder = new HtmlTableBuilder();
+        tableBuilder.addHeader();
 
         for (Employee employee : employees) {
-            String htmlRow = employeeConverter.covert(employee);
-            builder.append(htmlRow);
+            String employeeHtml = employeeConverter.covert(employee);
+            tableBuilder.addRow(employeeHtml);
         }
-        builder.append("</table>");
-        return builder.toString();
+        tableBuilder.addFooter();
+        return tableBuilder.getTable();
     }
 
     public synchronized String getAllAsJson(List<Employee> employees) {
@@ -36,5 +37,20 @@ public class EmployeeRepresentationService {
         }
         result.append("]");
         return result.toString();
+    }
+
+    private StringBuilder addHeader() {
+        return new StringBuilder()
+                .append("<table>")
+                .append("<tr><th>Employee</th><th>Position</th></tr>");
+    }
+
+    private StringBuilder addFooter() {
+        return new StringBuilder()
+                .append("</table>");
+    }
+
+    private StringBuilder addRow(Employee employee) {
+        return new StringBuilder().append(employeeConverter.covert(employee));
     }
 }

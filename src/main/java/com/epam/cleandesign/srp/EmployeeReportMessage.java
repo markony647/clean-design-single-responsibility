@@ -1,9 +1,5 @@
 package com.epam.cleandesign.srp;
 
-import com.epam.cleandesign.srp.service.EmployeeRepresentationService;
-
-import java.util.List;
-
 public class EmployeeReportMessage {
 
     private final String recipient = "abcd@gmail.com";
