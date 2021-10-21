@@ -32,7 +32,7 @@ public class HtmlEmployeeTableBuilder {
     }
 
     private void addRow(Employee employee) {
-        String htmlRow = converter.covert(employee);
+        String htmlRow = converter.convert(employee);
         table.append(htmlRow);
     }
 }

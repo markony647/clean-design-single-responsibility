@@ -4,5 +4,5 @@ import com.epam.cleandesign.srp.Employee;
 
 public abstract class GenericEmployeeConverter {
 
-    public abstract String covert(Employee employee);
+    public abstract String convert(Employee employee);
 }

@@ -41,7 +41,7 @@ public class JsonEmployeeBuilder {
     }
 
     private void addEmployee(Employee employee) {
-        String employeeJson = converter.covert(employee);
+        String employeeJson = converter.convert(employee);
         json.append(employeeJson);
     }
 

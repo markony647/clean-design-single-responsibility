@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class JsonEmployeeConverter extends GenericEmployeeConverter {
     @Override
-    public String covert(Employee employee) {
+    public String convert(Employee employee) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.writeValueAsString(employee);
