@@ -11,8 +11,8 @@ public final class EmployeeReportSender {
 
     private final SessionManager sessionManager;
 
-    public EmployeeReportSender() {
-        sessionManager = new SessionManager();
+    public EmployeeReportSender(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
     }
 
     public void send(EmployeeReportMessage message) {

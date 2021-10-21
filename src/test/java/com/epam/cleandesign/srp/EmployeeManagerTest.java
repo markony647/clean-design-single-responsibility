@@ -126,7 +126,7 @@ public class EmployeeManagerTest {
         final ArgumentCaptor<Message> propertiesCaptor = ArgumentCaptor.forClass(Message.class);
         mockStatic(Transport.class);
 
-        EmployeeReportSender employeeReportSender = new EmployeeReportSender();
+        EmployeeReportSender employeeReportSender = new EmployeeReportSender(new SessionManager());
         EmployeeRepresentationService employeeRepresentationService = new EmployeeRepresentationService();
         EmployeeRepository employeeRepository = new EmployeeRepository(mockConnection);
         List<Employee> allEmployees = employeeRepository.findAll();

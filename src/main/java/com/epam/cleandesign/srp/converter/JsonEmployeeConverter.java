@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
-public class JsonEmployeeConverter extends EmployeeConverter {
+public class JsonEmployeeConverter extends GenericEmployeeConverter {
     @Override
     public String covert(Employee employee) {
         ObjectMapper mapper = new ObjectMapper();
