@@ -1,5 +1,7 @@
 package com.epam.cleandesign.srp;
 
+import com.epam.cleandesign.srp.repository.EmployeeRepository;
+
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -7,15 +9,19 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.sql.Connection;
+import java.util.List;
 
 public final class EmployeeReportSender {
 
     private final SessionManager sessionManager;
     private final EmployeeReportMessage message;
+    private final EmployeeRepository employeeRepository;
 
     public EmployeeReportSender(Connection connection) {
         sessionManager = new SessionManager();
-        message = new EmployeeReportMessage(connection);
+        employeeRepository = new EmployeeRepository(connection);
+        List<Employee> allEmployees = employeeRepository.findAll();
+        message = new EmployeeReportMessage(allEmployees);
     }
 
     public void sendEmployeesReport() {

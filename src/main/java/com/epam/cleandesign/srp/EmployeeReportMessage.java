@@ -3,6 +3,7 @@ package com.epam.cleandesign.srp;
 import com.epam.cleandesign.srp.service.EmployeeRepresentationService;
 
 import java.sql.Connection;
+import java.util.List;
 
 public class EmployeeReportMessage {
 
@@ -12,8 +13,8 @@ public class EmployeeReportMessage {
     private final String contentType = "text/html; charset=utf-8";
     private final String content;
 
-    public EmployeeReportMessage(Connection connection) {
-        this.content = new EmployeeRepresentationService(connection).getAllAsHtml();
+    public EmployeeReportMessage(List<Employee> employees) {
+        this.content = new EmployeeRepresentationService().getAllAsHtml(employees);
     }
 
     public String getSubject() {

@@ -1,42 +1,42 @@
 package com.epam.cleandesign.srp.service;
 
 import com.epam.cleandesign.srp.Employee;
-import com.epam.cleandesign.srp.repository.EmployeeRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.epam.cleandesign.srp.converter.EmployeeConverter;
+import com.epam.cleandesign.srp.converter.HtmlEmployeeConverter;
+import com.epam.cleandesign.srp.converter.JsonEmployeeConverter;
 
-import java.io.IOException;
-import java.sql.Connection;
 import java.util.List;
 
 public class EmployeeRepresentationService {
-    private final EmployeeRepository employeeRepository;
+    private EmployeeConverter employeeConverter;
 
-    public EmployeeRepresentationService(Connection connection) {
-        employeeRepository = new EmployeeRepository(connection);
-    }
-
-    public synchronized String getAllAsHtml() {
-        List<Employee> employees = employeeRepository.findAll();
+    public synchronized String getAllAsHtml(List<Employee> employees) {
+        employeeConverter = new HtmlEmployeeConverter();
 
         StringBuilder builder = new StringBuilder();
         builder.append("<table>").append("<tr><th>Employee</th><th>Position</th></tr>");
 
         for (Employee employee : employees) {
-            builder.append("<tr><td>").append(employee.getFirstName()).append(" ").append(employee.getLastName())
-                    .append("</td><td>").append(employee.getSeniority()).append(" ").append(employee.getRole())
-                    .append("</td></tr>");
+            String htmlRow = employeeConverter.covert(employee);
+            builder.append(htmlRow);
         }
+
         builder.append("</table>");
         return builder.toString();
     }
 
-    public synchronized String getAllAsJson() {
-        List<Employee> employees = employeeRepository.findAll();
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(employees);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
+    public synchronized String getAllAsJson(List<Employee> employees) {
+        employeeConverter = new JsonEmployeeConverter();
+        StringBuilder result = new StringBuilder("[");
+
+        for (int i = 0; i < employees.size(); i++) {
+            result.append(employeeConverter.covert(employees.get(i)));
+            if (i < employees.size() - 1) {
+                result.append(",");
+            }
         }
+
+            result.append("]");
+        return result.toString();
     }
 }

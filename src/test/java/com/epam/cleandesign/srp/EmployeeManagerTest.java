@@ -1,5 +1,6 @@
 package com.epam.cleandesign.srp;
 
+import com.epam.cleandesign.srp.repository.EmployeeRepository;
 import com.epam.cleandesign.srp.service.EmployeeRepresentationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -141,15 +142,16 @@ public class EmployeeManagerTest {
     }
 
     private void testJsonConvert(String json) throws Exception {
-        EmployeeRepresentationService employeeRepresentationService = new EmployeeRepresentationService(mockConnection);
-        String serialized = employeeRepresentationService.getAllAsJson();
+        EmployeeRepresentationService employeeRepresentationService = new EmployeeRepresentationService();
+        EmployeeRepository employeeRepository = new EmployeeRepository(mockConnection);
+        String serialized = employeeRepresentationService.getAllAsJson(employeeRepository.findAll());
 
         JSONAssert.assertEquals(serialized, serialized, json, false);
 
         //check caching
         clearInvocations(resultSetMock);
         when(resultSetMock.next()).thenReturn(false);
-        serialized = employeeRepresentationService.getAllAsJson();
+        serialized = employeeRepresentationService.getAllAsJson(employeeRepository.findAll());
         JSONAssert.assertEquals(serialized, serialized, json, false);
     }
 }
