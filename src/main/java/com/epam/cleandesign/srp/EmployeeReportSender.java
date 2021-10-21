@@ -1,32 +1,23 @@
 package com.epam.cleandesign.srp;
 
-import com.epam.cleandesign.srp.repository.EmployeeRepository;
-
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.sql.Connection;
-import java.util.List;
 
 public final class EmployeeReportSender {
 
     private final SessionManager sessionManager;
-    private final EmployeeReportMessage message;
-    private final EmployeeRepository employeeRepository;
 
-    public EmployeeReportSender(Connection connection) {
+    public EmployeeReportSender() {
         sessionManager = new SessionManager();
-        employeeRepository = new EmployeeRepository(connection);
-        List<Employee> allEmployees = employeeRepository.findAll();
-        message = new EmployeeReportMessage(allEmployees);
     }
 
-    public void sendEmployeesReport() {
+    public void send(EmployeeReportMessage message) {
         try {
-            MimeMessage mimeMessage = prepareMimeMessage();
+            MimeMessage mimeMessage = prepareMimeMessage(message);
             sendMessage(mimeMessage);
         } catch (MessagingException ex) {
             throw new IllegalStateException(ex);
@@ -37,7 +28,7 @@ public final class EmployeeReportSender {
         Transport.send(message);
     }
 
-    private MimeMessage prepareMimeMessage() throws MessagingException {
+    private MimeMessage prepareMimeMessage(EmployeeReportMessage message) throws MessagingException {
         Session session = sessionManager.prepareSession();
         MimeMessage mimeMessage = new MimeMessage(session);
         mimeMessage.setFrom(new InternetAddress(message.getAuthor()));

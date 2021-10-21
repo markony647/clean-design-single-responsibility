@@ -20,7 +20,6 @@ public class EmployeeRepresentationService {
             String htmlRow = employeeConverter.covert(employee);
             builder.append(htmlRow);
         }
-
         builder.append("</table>");
         return builder.toString();
     }
@@ -35,8 +34,7 @@ public class EmployeeRepresentationService {
                 result.append(",");
             }
         }
-
-            result.append("]");
+        result.append("]");
         return result.toString();
     }
 }

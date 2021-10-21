@@ -126,8 +126,13 @@ public class EmployeeManagerTest {
         final ArgumentCaptor<Message> propertiesCaptor = ArgumentCaptor.forClass(Message.class);
         mockStatic(Transport.class);
 
-        EmployeeReportSender manager = new EmployeeReportSender(mockConnection);
-        manager.sendEmployeesReport();
+        EmployeeReportSender employeeReportSender = new EmployeeReportSender();
+        EmployeeRepresentationService employeeRepresentationService = new EmployeeRepresentationService();
+        EmployeeRepository employeeRepository = new EmployeeRepository(mockConnection);
+        List<Employee> allEmployees = employeeRepository.findAll();
+        String htmlContent = employeeRepresentationService.getAllAsHtml(allEmployees);
+        EmployeeReportMessage message = new EmployeeReportMessage(htmlContent);
+        employeeReportSender.send(message);
 
         verifyStatic(Transport.class);
         Transport.send(propertiesCaptor.capture());
@@ -137,7 +142,7 @@ public class EmployeeManagerTest {
         //check caching
         clearInvocations(resultSetMock);
         when(resultSetMock.next()).thenReturn(false);
-        manager.sendEmployeesReport();
+        employeeReportSender.send(message);
         assertEquals(propertiesCaptor.getValue().getContent(), expected);
     }
 
