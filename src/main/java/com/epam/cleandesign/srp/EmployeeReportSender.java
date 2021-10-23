@@ -7,6 +7,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import static com.epam.cleandesign.srp.EmployeeReportMessageConfiguration.*;
+
 public final class EmployeeReportSender {
 
     private final SessionManager sessionManager;
@@ -31,10 +33,10 @@ public final class EmployeeReportSender {
     private MimeMessage prepareMimeMessage(EmployeeReportMessage message) throws MessagingException {
         Session session = sessionManager.prepareSession();
         MimeMessage mimeMessage = new MimeMessage(session);
-        mimeMessage.setFrom(new InternetAddress(message.getAuthor()));
-        mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(message.getRecipient()));
-        mimeMessage.setSubject(message.getSubject());
-        mimeMessage.setContent(message.getContent(), message.getContentType());
+        mimeMessage.setFrom(new InternetAddress(AUTHOR));
+        mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(RECIPIENT));
+        mimeMessage.setSubject(SUBJECT);
+        mimeMessage.setContent(message.getContent(), CONTENT_TYPE);
         return mimeMessage;
     }
 }
