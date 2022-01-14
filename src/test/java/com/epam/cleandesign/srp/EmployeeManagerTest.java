@@ -1,5 +1,7 @@
 package com.epam.cleandesign.srp;
 
+import com.epam.cleandesign.srp.repository.EmployeeRepository;
+import com.epam.cleandesign.srp.service.EmployeeRepresentationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -124,8 +126,13 @@ public class EmployeeManagerTest {
         final ArgumentCaptor<Message> propertiesCaptor = ArgumentCaptor.forClass(Message.class);
         mockStatic(Transport.class);
 
-        EmployeeManager manager = new EmployeeManager();
-        manager.sendEmployeesReport(mockConnection);
+        EmployeeReportSender employeeReportSender = new EmployeeReportSender(new SessionManager());
+        EmployeeRepresentationService employeeRepresentationService = new EmployeeRepresentationService();
+        EmployeeRepository employeeRepository = new EmployeeRepository(mockConnection);
+        List<Employee> allEmployees = employeeRepository.findAll();
+        String htmlContent = employeeRepresentationService.getAllAsHtmlTable(allEmployees);
+        EmployeeReportMessage message = new EmployeeReportMessage(htmlContent);
+        employeeReportSender.send(message);
 
         verifyStatic(Transport.class);
         Transport.send(propertiesCaptor.capture());
@@ -135,20 +142,21 @@ public class EmployeeManagerTest {
         //check caching
         clearInvocations(resultSetMock);
         when(resultSetMock.next()).thenReturn(false);
-        manager.sendEmployeesReport(mockConnection);
+        employeeReportSender.send(message);
         assertEquals(propertiesCaptor.getValue().getContent(), expected);
     }
 
     private void testJsonConvert(String json) throws Exception {
-        EmployeeManager manager = new EmployeeManager();
-        String serialized = manager.employeesAsJson(mockConnection);
+        EmployeeRepresentationService employeeRepresentationService = new EmployeeRepresentationService();
+        EmployeeRepository employeeRepository = new EmployeeRepository(mockConnection);
+        String serialized = employeeRepresentationService.getAllAsJson(employeeRepository.findAll());
 
         JSONAssert.assertEquals(serialized, serialized, json, false);
 
         //check caching
         clearInvocations(resultSetMock);
         when(resultSetMock.next()).thenReturn(false);
-        serialized = manager.employeesAsJson(mockConnection);
+        serialized = employeeRepresentationService.getAllAsJson(employeeRepository.findAll());
         JSONAssert.assertEquals(serialized, serialized, json, false);
     }
 }
